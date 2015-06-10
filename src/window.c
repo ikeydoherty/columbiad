@@ -42,7 +42,7 @@ static void init_styles(void)
         g_object_unref(file);
 }
 
-gboolean update_clock(MainWindow *self)
+static gboolean update_clock(MainWindow *self)
 {
         time_t rtime;
         char ftime[6];
@@ -59,7 +59,7 @@ gboolean update_clock(MainWindow *self)
         return TRUE;
 }
 
-gboolean start_clock(GtkWidget *widget, __attribute__ ((unused)) GdkEventFocus *event)
+static gboolean start_clock(GtkWidget *widget, __attribute__ ((unused)) GdkEventFocus *event)
 {
         MainWindow *self = MAIN_WINDOW(widget);
 
@@ -72,7 +72,7 @@ end:
         return GDK_EVENT_PROPAGATE;
 }
 
-gboolean stop_clock(GtkWidget *widget, __attribute__ ((unused)) GdkEventFocus *event)
+static gboolean stop_clock(GtkWidget *widget, __attribute__ ((unused)) GdkEventFocus *event)
 {
         MainWindow *self = MAIN_WINDOW(widget);
 
@@ -84,6 +84,24 @@ gboolean stop_clock(GtkWidget *widget, __attribute__ ((unused)) GdkEventFocus *e
         self->clock_id = 0;
 end:
         return GDK_EVENT_PROPAGATE;
+}
+
+static gboolean key_handler(GtkWidget *widget, GdkEventKey *key)
+{
+        MainWindow *self = MAIN_WINDOW(widget);
+        gboolean ret = GDK_EVENT_STOP;
+
+        switch (key->keyval) {
+                case GDK_KEY_Escape:
+                case GDK_KEY_Down:
+                case GDK_KEY_Up:
+                        g_signal_emit_by_name(self->button, "clicked", NULL);
+                        break;
+                default:
+                        ret = GDK_EVENT_PROPAGATE;
+                        break;
+        }
+        return ret;
 }
 
 /* Initialisation */
@@ -98,6 +116,7 @@ static void main_window_class_init(MainWindowClass *klass)
 
         wid_class->focus_in_event = start_clock;
         wid_class->focus_out_event = stop_clock;
+        wid_class->key_release_event = key_handler;
 }
 
 /**
@@ -133,6 +152,7 @@ static void main_window_init(MainWindow *self)
         update_clock(self);
 
         wid = gtk_menu_button_new();
+        self->button = wid;
         img = gtk_image_new_from_icon_name("system-shutdown-symbolic", GTK_ICON_SIZE_LARGE_TOOLBAR);
         gtk_container_add(GTK_CONTAINER(wid), img);
 

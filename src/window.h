@@ -33,6 +33,7 @@ struct _MainWindow {
         GtkWidget *clock;
         gulong clock_id;
         GMenu *menu;
+        GtkWidget *button;
         GtkWidget *apps;
 };
 
