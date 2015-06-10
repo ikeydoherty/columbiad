@@ -11,9 +11,6 @@
 
 #include "image.h"
 
-/* In future do the whole maths thing to figure out a reasonable size */
-#define DEFAULT_PIXEL_SIZE 128
-
 G_DEFINE_TYPE(LauncherImage, launcher_image, GTK_TYPE_EVENT_BOX)
 
 /* Boilerplate GObject code */
@@ -21,9 +18,10 @@ static void launcher_image_class_init(LauncherImageClass *klass);
 static void launcher_image_init(LauncherImage *self);
 static void launcher_image_dispose(GObject *object);
 static void update_app_info(LauncherImage *self);
+static void update_appearance(LauncherImage *self);
 
 enum {
-        PROP_MIN, PROP_APPINFO, N_PROPERTIES
+        PROP_MIN, PROP_APPINFO, PROP_ACTIVE, N_PROPERTIES
 };
 
 static GParamSpec *obj_props[N_PROPERTIES] = { NULL, };
@@ -44,6 +42,10 @@ static void launcher_image_set_property(GObject *object,
                         }
                         update_app_info(self);
                         break;
+                case PROP_ACTIVE:
+                        self->active = g_value_get_boolean((GValue*)value);
+                        update_appearance(self);
+                        break;
                 default:
                         G_OBJECT_WARN_INVALID_PROPERTY_ID (object,
                                 prop_id, pspec);
@@ -61,7 +63,10 @@ static void launcher_image_get_property(GObject *object,
         self = LAUNCHER_IMAGE(object);
         switch (prop_id) {
                 case PROP_APPINFO:
-                        g_value_set_pointer((GValue *)value, self->info);
+                        g_value_set_pointer((GValue*)value, self->info);
+                        break;
+                case PROP_ACTIVE:
+                        g_value_set_boolean((GValue*)value, self->active);
                         break;
                 default:
                         G_OBJECT_WARN_INVALID_PROPERTY_ID (object,
@@ -82,6 +87,9 @@ static void launcher_image_class_init(LauncherImageClass *klass)
         obj_props[PROP_APPINFO] =
                 g_param_spec_pointer("appinfo", "AppInfo", "AppInfo",
                         G_PARAM_CONSTRUCT | G_PARAM_WRITABLE);
+        obj_props[PROP_ACTIVE] =
+                g_param_spec_boolean("active", "Active", "Active",  FALSE,
+                        G_PARAM_READWRITE | G_PARAM_CONSTRUCT);
 
         g_object_class->set_property = launcher_image_set_property;
         g_object_class->get_property = launcher_image_get_property;
@@ -104,8 +112,25 @@ static void update_app_info(LauncherImage *self)
         if (!self->info) {
                 return;
         }
-        gtk_image_set_from_gicon(GTK_IMAGE(self->image), g_app_info_get_icon(self->info), GTK_ICON_SIZE_INVALID);
+        gtk_image_set_from_gicon(GTK_IMAGE(self->image), g_app_info_get_icon(self->info), GTK_ICON_SIZE_DIALOG);
         gtk_image_set_pixel_size(GTK_IMAGE(self->image), DEFAULT_PIXEL_SIZE);
+}
+
+/**
+ * Update current appearance/size:
+ *
+ * @TODO: Tween this visual change
+ */
+static void update_appearance(LauncherImage *self)
+{
+        if (!self->info) {
+                return;
+        }
+        if (self->active) {
+                gtk_image_set_pixel_size(GTK_IMAGE(self->image), LARGE_PIXEL_SIZE);
+        } else {
+                gtk_image_set_pixel_size(GTK_IMAGE(self->image), DEFAULT_PIXEL_SIZE);
+        }
 }
 
 static void launcher_image_dispose(GObject *object)

@@ -9,11 +9,12 @@
  * (at your option) any later version.
  */
 
+#include <stdbool.h>
+
 #include "carousel.h"
 #include "image.h"
+#include "common.h"
 
-/* In future do the whole maths thing to figure out a reasonable size */
-#define DEFAULT_PIXEL_SIZE 128
 
 G_DEFINE_TYPE(AppCarousel, app_carousel, GTK_TYPE_EVENT_BOX)
 
@@ -36,6 +37,7 @@ static void build_apps(__attribute__ ((unused)) AppCarousel *self)
         GList *apps = NULL;
         GList *elem = NULL;
         GAppInfo *info = NULL;
+        bool first = true;
 
         apps = g_app_info_get_all();
         if (!apps) {
@@ -53,6 +55,10 @@ static void build_apps(__attribute__ ((unused)) AppCarousel *self)
                 /* Soo.. this is very temporary.. */
                 image = launcher_image_new(info);
                 gtk_box_pack_start(GTK_BOX(self->box), image, FALSE, FALSE, 0);
+                if (first) {
+                        g_object_set(image, "active", TRUE, NULL);
+                        first = FALSE;
+                }
         }
 
         g_list_free(apps);
@@ -72,7 +78,9 @@ static void app_carousel_init(AppCarousel *self)
         self->box = wid;
         build_apps(self);
 
-        gtk_widget_set_size_request(GTK_WIDGET(self), -1, DEFAULT_PIXEL_SIZE+(DEFAULT_PIXEL_SIZE*0.5));
+        gtk_widget_set_size_request(GTK_WIDGET(self), -1, LARGE_PIXEL_SIZE+(DEFAULT_PIXEL_SIZE*0.5));
+
+        g_object_set(self, MARGIN_START, 10, MARGIN_END, 10, NULL);
 }
 
 
