@@ -29,6 +29,15 @@ static void app_carousel_class_init(AppCarouselClass *klass)
 
 static void app_carousel_init(__attribute__ ((unused)) AppCarousel *self)
 {
+        GtkWidget *wid = NULL;
+
+        wid = gtk_scrolled_window_new(NULL, NULL);
+        gtk_container_add(GTK_CONTAINER(self), wid);
+        self->scroll = wid;
+
+        wid = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
+        gtk_container_add(GTK_CONTAINER(self->scroll), wid);
+        self->box = wid;
 }
 
 
@@ -38,9 +47,9 @@ static void app_carousel_dispose(GObject *object)
 }
 
 /* Utility; return a new AppCarousel */
-AppCarousel *app_carousel_new()
+GtkWidget *app_carousel_new()
 {
-        AppCarousel *self;
+        GtkWidget *self;
 
         self = g_object_new(APP_CAROUSEL_TYPE, NULL);
         return self;

@@ -28,6 +28,8 @@ typedef struct _AppCarouselClass   AppCarouselClass;
 /* AppCarousel object */
 struct _AppCarousel {
         GtkBin parent;
+        GtkWidget *scroll;
+        GtkWidget *box;
 };
 
 /* AppCarousel class definition */
@@ -43,4 +45,4 @@ GType app_carousel_get_type(void);
  * @param app Parent application instance
  * @return A new AppCarousel
  */
-AppCarousel *app_carousel_new(void);
+GtkWidget *app_carousel_new(void);

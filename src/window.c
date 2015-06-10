@@ -107,15 +107,19 @@ static void main_window_init(MainWindow *self)
         GtkWidget *box = NULL;
         GtkWidget *wid = NULL;
         GtkWidget *img = NULL;
+        GtkWidget *layout = NULL;
 
         init_styles();
         gtk_window_set_title(GTK_WINDOW(self), "Columbiad - Fullscreen in Future!");
         gtk_window_set_position(GTK_WINDOW(self), GTK_WIN_POS_CENTER);
         gtk_window_set_default_size(GTK_WINDOW(self), 800, 600);
 
+        layout = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
+        gtk_container_add(GTK_CONTAINER(self), layout);
+
         /* Top box setup */
         box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
-        gtk_container_add(GTK_CONTAINER(self), box);
+        gtk_box_pack_start(GTK_BOX(layout), box, FALSE, FALSE, 0);
         g_object_set(box, "halign", GTK_ALIGN_END, "valign", GTK_ALIGN_START, "margin-right", 20, "margin-top", 40, NULL);
 
         wid = gtk_label_new("");
@@ -140,6 +144,11 @@ static void main_window_init(MainWindow *self)
         g_menu_append(self->menu, "Quit", "app.quit");
 
         gtk_menu_button_set_menu_model(GTK_MENU_BUTTON(wid), G_MENU_MODEL(self->menu));
+
+        wid = app_carousel_new();
+        gtk_box_pack_start(GTK_BOX(layout), wid, TRUE, TRUE, 0);
+        g_object_set(wid, "valign", GTK_ALIGN_CENTER, "halign", GTK_ALIGN_FILL, NULL);
+        self->apps = wid;
 
         gtk_widget_show_all(GTK_WIDGET(self));
 }

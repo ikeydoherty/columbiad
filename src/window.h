@@ -15,6 +15,8 @@
 #include <glib-object.h>
 #include <gtk/gtk.h>
 
+#include "carousel.h"
+
 typedef struct _MainWindow MainWindow;
 typedef struct _MainWindowClass   MainWindowClass;
 
@@ -31,6 +33,7 @@ struct _MainWindow {
         GtkWidget *clock;
         gulong clock_id;
         GMenu *menu;
+        GtkWidget *apps;
 };
 
 /* MainWindow class definition */
