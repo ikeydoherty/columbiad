@@ -10,6 +10,7 @@
  */
 
 #include "carousel.h"
+#include "image.h"
 
 /* In future do the whole maths thing to figure out a reasonable size */
 #define DEFAULT_PIXEL_SIZE 128
@@ -50,9 +51,7 @@ static void build_apps(__attribute__ ((unused)) AppCarousel *self)
                         continue;
                 }
                 /* Soo.. this is very temporary.. */
-                image = gtk_image_new_from_gicon(g_app_info_get_icon(info), GTK_ICON_SIZE_INVALID);
-                gtk_image_set_pixel_size(GTK_IMAGE(image), DEFAULT_PIXEL_SIZE);
-                g_object_set(image, "margin", 10, NULL);
+                image = launcher_image_new(info);
                 gtk_box_pack_start(GTK_BOX(self->box), image, FALSE, FALSE, 0);
         }
 
