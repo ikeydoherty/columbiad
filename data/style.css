@@ -1,0 +1,26 @@
+.clock {
+    font-size: 24pt;
+    color: #3C6A81;
+}
+
+.button {
+    background-image: none;
+    background-color: transparent;
+    border-image: none;
+    border: 1px solid transparent;
+    color: #3C6A81;
+    margin: 5px;
+}
+
+.button:hover {
+    background-image: none;
+    background-color: transparent;
+    color: lighter(#3C6A81);
+    icon-shadow: 0px 1px 2px alpha(white, 0.3)
+}
+
+MainWindow {
+    background-image: -gtk-gradient(linear,
+        left center, right bottom,
+        from (darker(darker(#001B2E))), to(#001B2E));
+}

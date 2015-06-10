@@ -19,3 +19,6 @@ stamp-h1
 # executable(s)
 columbiad
 
+# assets
+app-resources.h
+app-resources.c
