@@ -15,6 +15,8 @@
 #include <glib-object.h>
 #include <gtk/gtk.h>
 
+#include <stdbool.h>
+
 #include "carousel.h"
 
 typedef struct _MainWindow MainWindow;
@@ -35,6 +37,7 @@ struct _MainWindow {
         GMenu *menu;
         GtkWidget *button;
         GtkWidget *apps;
+        bool fullscreen;
 };
 
 /* MainWindow class definition */

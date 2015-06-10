@@ -86,6 +86,20 @@ end:
         return GDK_EVENT_PROPAGATE;
 }
 
+static void toggle_fullscreen(__attribute__ ((unused)) MainWindow *self)
+{
+        self->fullscreen = !self->fullscreen;
+
+        /* Take advantage of most window managers :P */
+        if (self->fullscreen) {
+                gtk_window_fullscreen(GTK_WINDOW(self));
+                gtk_window_set_keep_below(GTK_WINDOW(self), TRUE);
+        } else {
+                gtk_window_unfullscreen(GTK_WINDOW(self));
+                gtk_window_set_keep_below(GTK_WINDOW(self), FALSE);
+        }
+}
+
 static gboolean key_handler(GtkWidget *widget, GdkEventKey *key)
 {
         MainWindow *self = MAIN_WINDOW(widget);
@@ -97,6 +111,17 @@ static gboolean key_handler(GtkWidget *widget, GdkEventKey *key)
                 case GDK_KEY_Up:
                         g_signal_emit_by_name(self->button, "clicked", NULL);
                         break;
+                case GDK_KEY_F11:
+                case GDK_KEY_F:
+                case GDK_KEY_f:
+                        toggle_fullscreen(self);
+                        break;
+                /* Must stay at the end to cascade */
+                case GDK_KEY_Return:
+                        if (key->state & GDK_MOD1_MASK) {
+                                toggle_fullscreen(self);
+                                break;
+                        }
                 default:
                         ret = GDK_EVENT_PROPAGATE;
                         break;
