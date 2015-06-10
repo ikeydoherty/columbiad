@@ -41,13 +41,62 @@ static void init_styles(void)
         g_object_unref(file);
 }
 
+gboolean update_clock(MainWindow *self)
+{
+        time_t rtime;
+        char ftime[9];
+        struct tm *ti = NULL;
+
+        time(&rtime);
+        ti = localtime(&rtime);
+        if (strftime(ftime, sizeof ftime, "%H:%M:%S", ti) < (sizeof(ftime)-1)) {
+                self->clock_id = 0;
+                return FALSE;
+        }
+        gtk_label_set_label(GTK_LABEL(self->clock), ftime);
+
+        return TRUE;
+}
+
+gboolean start_clock(GtkWidget *widget, __attribute__ ((unused)) GdkEventFocus *event)
+{
+        MainWindow *self = MAIN_WINDOW(widget);
+
+        if (self->clock_id != 0) {
+                goto end;
+        }
+        update_clock(self);
+        self->clock_id = g_timeout_add_seconds_full(G_PRIORITY_LOW, 1, (GSourceFunc)update_clock, self, NULL);
+end:
+        return GDK_EVENT_PROPAGATE;
+}
+
+gboolean stop_clock(GtkWidget *widget, __attribute__ ((unused)) GdkEventFocus *event)
+{
+        MainWindow *self = MAIN_WINDOW(widget);
+
+        if (self->clock_id == 0) {
+                goto end;
+        }
+
+        g_source_remove(self->clock_id);
+        self->clock_id = 0;
+end:
+        return GDK_EVENT_PROPAGATE;
+}
+
 /* Initialisation */
 static void main_window_class_init(MainWindowClass *klass)
 {
         GObjectClass *g_object_class;
+        GtkWidgetClass *wid_class;
 
         g_object_class = G_OBJECT_CLASS(klass);
+        wid_class = GTK_WIDGET_CLASS(klass);
         g_object_class->dispose = &main_window_dispose;
+
+        wid_class->focus_in_event = start_clock;
+        wid_class->focus_out_event = stop_clock;
 }
 
 /**
@@ -55,10 +104,32 @@ static void main_window_class_init(MainWindowClass *klass)
  */
 static void main_window_init(MainWindow *self)
 {
+        GtkWidget *box = NULL;
+        GtkWidget *wid = NULL;
+
         init_styles();
         gtk_window_set_title(GTK_WINDOW(self), "Columbiad - Fullscreen in Future!");
         gtk_window_set_position(GTK_WINDOW(self), GTK_WIN_POS_CENTER);
         gtk_window_set_default_size(GTK_WINDOW(self), 800, 600);
+
+        /* Top box setup */
+        box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
+        gtk_container_add(GTK_CONTAINER(self), box);
+        g_object_set(box, "halign", GTK_ALIGN_END, "valign", GTK_ALIGN_START, "margin-right", 20, "margin-top", 40, NULL);
+
+        wid = gtk_label_new("");
+        WCLASS(wid, "clock");
+        gtk_box_pack_start(GTK_BOX(box), wid, FALSE, FALSE, 0);
+        self->clock = wid;
+
+        self->clock_id = g_timeout_add_seconds_full(G_PRIORITY_LOW, 1, (GSourceFunc)update_clock, self, NULL);
+        //update_clock(GTK_LABEL(wid));
+
+        wid = gtk_button_new_from_icon_name("system-shutdown-symbolic", GTK_ICON_SIZE_LARGE_TOOLBAR);
+        gtk_widget_set_can_focus(wid, FALSE);
+        gtk_button_set_relief(GTK_BUTTON(wid), GTK_RELIEF_NONE);
+        gtk_box_pack_start(GTK_BOX(box), wid, FALSE, FALSE, 0);
+
         gtk_widget_show_all(GTK_WIDGET(self));
 }
 

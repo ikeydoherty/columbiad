@@ -28,6 +28,8 @@ typedef struct _MainWindowClass   MainWindowClass;
 /* MainWindow object */
 struct _MainWindow {
         GtkApplicationWindow parent;
+        GtkWidget *clock;
+        gulong clock_id;
 };
 
 /* MainWindow class definition */
@@ -47,3 +49,6 @@ GType main_window_get_type(void);
  */
 MainWindow *main_window_new(GApplication *application);
 
+
+/* Utility: Add class to a widgets stylecontext */
+#define WCLASS(w,c) { gtk_style_context_add_class(gtk_widget_get_style_context(GTK_WIDGET(w)), c); }
