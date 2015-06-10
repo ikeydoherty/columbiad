@@ -11,7 +11,7 @@ libtool
 ltmain.sh
 m4/
 missing
-src/.deps/
+.deps/
 stamp-h1
 .dirstamp
 *.o
