@@ -44,12 +44,12 @@ static void init_styles(void)
 gboolean update_clock(MainWindow *self)
 {
         time_t rtime;
-        char ftime[9];
+        char ftime[6];
         struct tm *ti = NULL;
 
         time(&rtime);
         ti = localtime(&rtime);
-        if (strftime(ftime, sizeof ftime, "%H:%M:%S", ti) < (sizeof(ftime)-1)) {
+        if (strftime(ftime, sizeof ftime, "%H:%M", ti) < (sizeof(ftime)-1)) {
                 self->clock_id = 0;
                 return FALSE;
         }
