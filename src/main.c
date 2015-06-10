@@ -22,7 +22,8 @@ static void app_activate(GApplication *app, __attribute__ ((unused)) gpointer ud
                 goto present;
                 return;
         }
-        kapp = main_window_new(app);
+        kapp = main_window_new(GTK_APPLICATION(app));
+        main_window_init_ui(kapp);
         gtk_widget_show(GTK_WIDGET(kapp));
 present:
         gtk_window_present(GTK_WINDOW(kapp));

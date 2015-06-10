@@ -106,6 +106,7 @@ static void main_window_init(MainWindow *self)
 {
         GtkWidget *box = NULL;
         GtkWidget *wid = NULL;
+        GtkWidget *img = NULL;
 
         init_styles();
         gtk_window_set_title(GTK_WINDOW(self), "Columbiad - Fullscreen in Future!");
@@ -125,21 +126,60 @@ static void main_window_init(MainWindow *self)
         self->clock_id = g_timeout_add_seconds_full(G_PRIORITY_LOW, 1, (GSourceFunc)update_clock, self, NULL);
         update_clock(self);
 
-        wid = gtk_button_new_from_icon_name("system-shutdown-symbolic", GTK_ICON_SIZE_LARGE_TOOLBAR);
+        wid = gtk_menu_button_new();
+        img = gtk_image_new_from_icon_name("system-shutdown-symbolic", GTK_ICON_SIZE_LARGE_TOOLBAR);
+        gtk_container_add(GTK_CONTAINER(wid), img);
+
         gtk_widget_set_can_focus(wid, FALSE);
         gtk_button_set_relief(GTK_BUTTON(wid), GTK_RELIEF_NONE);
         gtk_box_pack_start(GTK_BOX(box), wid, FALSE, FALSE, 0);
 
+        /* Construct top menu.. */
+        self->menu = g_menu_new();
+        g_menu_append(self->menu, "Quit", "app.quit");
+
+        gtk_menu_button_set_menu_model(GTK_MENU_BUTTON(wid), G_MENU_MODEL(self->menu));
+
         gtk_widget_show_all(GTK_WIDGET(self));
+}
+
+static void app_quit(GApplication *app, __attribute__ ((unused)) gpointer udata)
+{
+        g_application_quit(app);
+}
+
+/*
+ * We need to do this post construction because the application property isn't
+ * available to us.. Not at all inconvenient.
+ */
+void main_window_init_ui(MainWindow *self)
+{
+        GSimpleAction *action = NULL;
+        GtkApplication *app = NULL;
+
+        app = gtk_window_get_application(GTK_WINDOW(self));
+        action = g_simple_action_new("quit", NULL);
+        g_action_map_add_action(G_ACTION_MAP(app), G_ACTION(action));
+        g_object_unref(action);
+
+        g_signal_connect_swapped(action, "activate", G_CALLBACK(app_quit), app);
 }
 
 static void main_window_dispose(GObject *object)
 {
+        MainWindow *self = MAIN_WINDOW(object);
+
+        if (self->menu) {
+                g_object_unref(self->menu);
+                self->menu = NULL;
+        }
+        stop_clock(GTK_WIDGET(self), NULL);
+
         G_OBJECT_CLASS (main_window_parent_class)->dispose (object);
 }
 
 /* Utility; return a new MainWindow */
-MainWindow *main_window_new(GApplication *application)
+MainWindow *main_window_new(GtkApplication *application)
 {
         MainWindow *self;
 
