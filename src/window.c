@@ -123,7 +123,7 @@ static void main_window_init(MainWindow *self)
         self->clock = wid;
 
         self->clock_id = g_timeout_add_seconds_full(G_PRIORITY_LOW, 1, (GSourceFunc)update_clock, self, NULL);
-        update_clock(GTK_LABEL(wid));
+        update_clock(self);
 
         wid = gtk_button_new_from_icon_name("system-shutdown-symbolic", GTK_ICON_SIZE_LARGE_TOOLBAR);
         gtk_widget_set_can_focus(wid, FALSE);
