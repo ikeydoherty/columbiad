@@ -39,6 +39,7 @@ columbiad_SOURCES = \
 	src/window.c \
 	src/carousel.h \
 	src/carousel.c \
+	src/common.h \
 	app-resources.h \
 	app-resources.c
 

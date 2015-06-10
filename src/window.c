@@ -10,6 +10,7 @@
  */
 
 #include "window.h"
+#include "common.h"
 
 G_DEFINE_TYPE(MainWindow, main_window, GTK_TYPE_APPLICATION_WINDOW)
 
@@ -120,7 +121,7 @@ static void main_window_init(MainWindow *self)
         /* Top box setup */
         box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
         gtk_box_pack_start(GTK_BOX(layout), box, FALSE, FALSE, 0);
-        g_object_set(box, "halign", GTK_ALIGN_END, "valign", GTK_ALIGN_START, "margin-right", 20, "margin-top", 40, NULL);
+        g_object_set(box, "halign", GTK_ALIGN_END, "valign", GTK_ALIGN_START, MARGIN_END, 20, "margin-top", 40, NULL);
 
         wid = gtk_label_new("");
         gtk_widget_set_halign(wid, GTK_ALIGN_START);

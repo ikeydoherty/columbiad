@@ -58,6 +58,3 @@ void main_window_init_ui(MainWindow *self);
  */
 MainWindow *main_window_new(GtkApplication *application);
 
-
-/* Utility: Add class to a widgets stylecontext */
-#define WCLASS(w,c) { gtk_style_context_add_class(gtk_widget_get_style_context(GTK_WIDGET(w)), c); }
