@@ -42,7 +42,6 @@ GType app_carousel_get_type(void);
 /**
  * Construct a new AppCarousel
  *
- * @param app Parent application instance
  * @return A new AppCarousel
  */
 GtkWidget *app_carousel_new(void);
