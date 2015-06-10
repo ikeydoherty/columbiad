@@ -10,12 +10,33 @@
  */
 
 #include <stdlib.h>
-
 #include <gtk/gtk.h>
+
+#include "window.h"
+
+static MainWindow *kapp = NULL;
+
+static void app_activate(GApplication *app, __attribute__ ((unused)) gpointer udata)
+{
+        if (kapp) {
+                goto present;
+                return;
+        }
+        kapp = main_window_new(app);
+        gtk_widget_show(GTK_WIDGET(kapp));
+present:
+        gtk_window_present(GTK_WINDOW(kapp));
+}
 
 int main(int argc, char **argv)
 {
-        gtk_init(&argc, &argv);
+        GtkApplication *app = NULL;
+        int status;
 
-        return EXIT_SUCCESS;
+        app = gtk_application_new("com.github.ikeydoherty.columbiad", G_APPLICATION_FLAGS_NONE);
+        g_signal_connect(G_OBJECT(app), "activate", G_CALLBACK(app_activate), NULL);
+        status = g_application_run(G_APPLICATION(app), argc, argv);
+
+        g_object_unref(app);
+        return status;
 }

@@ -19,7 +19,9 @@ CLEANFILES = \
 bin_PROGRAMS = columbiad
 
 columbiad_SOURCES = \
-	src/main.c
+	src/main.c \
+	src/window.h \
+	src/window.c
 
 columbiad_CFLAGS = \
 	$(GOBJECT_CFLAGS) \
