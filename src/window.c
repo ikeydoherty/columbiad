@@ -86,7 +86,7 @@ end:
         return GDK_EVENT_PROPAGATE;
 }
 
-static void toggle_fullscreen(__attribute__ ((unused)) MainWindow *self)
+static void toggle_fullscreen(MainWindow *self)
 {
         self->fullscreen = !self->fullscreen;
 
