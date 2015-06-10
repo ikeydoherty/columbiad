@@ -11,7 +11,10 @@
 
 #include "carousel.h"
 
-G_DEFINE_TYPE(AppCarousel, app_carousel, GTK_TYPE_BIN)
+/* In future do the whole maths thing to figure out a reasonable size */
+#define DEFAULT_PIXEL_SIZE 128
+
+G_DEFINE_TYPE(AppCarousel, app_carousel, GTK_TYPE_EVENT_BOX)
 
 /* Boilerplate GObject code */
 static void app_carousel_class_init(AppCarouselClass *klass);
@@ -27,17 +30,50 @@ static void app_carousel_class_init(AppCarouselClass *klass)
         g_object_class->dispose = &app_carousel_dispose;
 }
 
-static void app_carousel_init(__attribute__ ((unused)) AppCarousel *self)
+static void build_apps(__attribute__ ((unused)) AppCarousel *self)
+{
+        GList *apps = NULL;
+        GList *elem = NULL;
+        GAppInfo *info = NULL;
+
+        apps = g_app_info_get_all();
+        if (!apps) {
+                /* TODO: Scream at the user */
+                g_warning("No apps!");
+                return;
+        }
+
+        for (elem = apps; elem; elem = elem->next) {
+                GtkWidget *image = NULL;
+                info = elem->data;
+                if (!g_app_info_should_show(info)) {
+                        continue;
+                }
+                /* Soo.. this is very temporary.. */
+                image = gtk_image_new_from_gicon(g_app_info_get_icon(info), GTK_ICON_SIZE_INVALID);
+                gtk_image_set_pixel_size(GTK_IMAGE(image), DEFAULT_PIXEL_SIZE);
+                g_object_set(image, "margin", 10, NULL);
+                gtk_box_pack_start(GTK_BOX(self->box), image, FALSE, FALSE, 0);
+        }
+
+        g_list_free(apps);
+}
+
+static void app_carousel_init(AppCarousel *self)
 {
         GtkWidget *wid = NULL;
 
         wid = gtk_scrolled_window_new(NULL, NULL);
         gtk_container_add(GTK_CONTAINER(self), wid);
+        gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(wid), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
         self->scroll = wid;
 
         wid = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
         gtk_container_add(GTK_CONTAINER(self->scroll), wid);
         self->box = wid;
+        build_apps(self);
+
+        gtk_widget_set_size_request(GTK_WIDGET(self), -1, DEFAULT_PIXEL_SIZE+(DEFAULT_PIXEL_SIZE*0.5));
 }
 
 

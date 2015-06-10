@@ -24,3 +24,17 @@ MainWindow {
         left center, right bottom,
         from (darker(darker(#001B2E))), to(#001B2E));
 }
+
+.trough {
+    background-image: none;
+    background-color: transparent;
+    border-image: none;
+    border: 1px solid transparent;
+}
+
+GtkEventBox, GtkScrolledWindow {
+    background-image: none;
+    background-color: transparent;
+    border-image: none;
+    border: 1px solid transparent;
+}

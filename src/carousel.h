@@ -27,14 +27,14 @@ typedef struct _AppCarouselClass   AppCarouselClass;
 
 /* AppCarousel object */
 struct _AppCarousel {
-        GtkBin parent;
+        GtkEventBox parent;
         GtkWidget *scroll;
         GtkWidget *box;
 };
 
 /* AppCarousel class definition */
 struct _AppCarouselClass {
-        GtkBinClass parent_class;
+        GtkEventBoxClass parent_class;
 };
 
 GType app_carousel_get_type(void);
