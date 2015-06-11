@@ -30,6 +30,9 @@ struct _AppCarousel {
         GtkEventBox parent;
         GtkWidget *scroll;
         GtkWidget *box;
+
+        GList *children;
+        GList *node;
 };
 
 /* AppCarousel class definition */

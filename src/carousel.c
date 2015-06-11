@@ -38,6 +38,12 @@ static void build_apps(__attribute__ ((unused)) AppCarousel *self)
         GList *elem = NULL;
         GAppInfo *info = NULL;
         bool first = true;
+        GList *children = NULL;
+
+        if (self->children) {
+                g_list_free(self->children);
+                self->children = NULL;
+        }
 
         apps = g_app_info_get_all();
         if (!apps) {
@@ -59,7 +65,9 @@ static void build_apps(__attribute__ ((unused)) AppCarousel *self)
                         g_object_set(image, "active", TRUE, NULL);
                         first = FALSE;
                 }
+                children = g_list_append(children, image);
         }
+        self->children = children;
 
         g_list_free(apps);
 }
@@ -86,6 +94,13 @@ static void app_carousel_init(AppCarousel *self)
 
 static void app_carousel_dispose(GObject *object)
 {
+        AppCarousel *self = APP_CAROUSEL(object);
+
+        if (self->children) {
+                g_list_free(self->children);
+                self->children = NULL;
+        }
+
         G_OBJECT_CLASS (app_carousel_parent_class)->dispose (object);
 }
 
