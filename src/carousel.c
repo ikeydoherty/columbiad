@@ -40,6 +40,11 @@ static void app_carousel_class_init(AppCarouselClass *klass)
 static void select_item(AppCarousel *self, GList *node)
 {
         LauncherImage *image = NULL;
+        GtkAllocation alloc;
+        GtkAdjustment *adj = NULL;
+        gdouble val;
+        gdouble max;
+        gdouble nval = 0;
 
         if (self->node) {
                 image = self->node->data;
@@ -51,6 +56,21 @@ static void select_item(AppCarousel *self, GList *node)
         self->node = node;
         image = self->node->data;
         g_object_set(image, "active", TRUE, NULL);
+
+        adj = gtk_scrolled_window_get_hadjustment(GTK_SCROLLED_WINDOW(self->scroll));
+        val = gtk_adjustment_get_value(adj);
+        max = gtk_adjustment_get_upper(adj);
+
+        gtk_widget_get_allocation(GTK_WIDGET(image), &alloc);
+
+        if (alloc.x > 0) {
+                if (alloc.x > max) {
+                        nval = val;
+                } else {
+                        nval = alloc.x- (alloc.width*3.5);
+                }
+        }
+        gtk_adjustment_set_value(adj, nval);
 }
 
 static gboolean key_release_event(GtkWidget *widget, GdkEventKey *key)
