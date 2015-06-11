@@ -22,22 +22,73 @@ G_DEFINE_TYPE(AppCarousel, app_carousel, GTK_TYPE_EVENT_BOX)
 static void app_carousel_class_init(AppCarouselClass *klass);
 static void app_carousel_init(AppCarousel *self);
 static void app_carousel_dispose(GObject *object);
+static gboolean key_release_event(GtkWidget *widget, GdkEventKey *key);
 
 /* Initialisation */
 static void app_carousel_class_init(AppCarouselClass *klass)
 {
         GObjectClass *g_object_class;
+        GtkWidgetClass *widg_class;
+
         g_object_class = G_OBJECT_CLASS(klass);
+        widg_class = GTK_WIDGET_CLASS(klass);
 
         g_object_class->dispose = &app_carousel_dispose;
+        widg_class->key_press_event = key_release_event;
 }
 
-static void build_apps(__attribute__ ((unused)) AppCarousel *self)
+static void select_item(AppCarousel *self, GList *node)
+{
+        LauncherImage *image = NULL;
+
+        if (self->node) {
+                image = self->node->data;
+                g_object_set(image, "active", FALSE, NULL);
+        }
+        if (!node) {
+                return;
+        }
+        self->node = node;
+        image = self->node->data;
+        g_object_set(image, "active", TRUE, NULL);
+}
+
+static gboolean key_release_event(GtkWidget *widget, GdkEventKey *key)
+{
+        AppCarousel *self = APP_CAROUSEL(widget);
+
+        gboolean ret = GDK_EVENT_STOP;
+        GList *next = NULL;
+
+        if (!self->node) {
+                return GDK_EVENT_PROPAGATE;
+        }
+
+        switch (key->keyval) {
+                case GDK_KEY_Right:
+                        next = self->node->next;
+                        break;
+                case GDK_KEY_Left:
+                        next = self->node->prev;
+                        break;
+                default:
+                        ret = GDK_EVENT_PROPAGATE;
+                        break;
+        }
+
+        if (!next) {
+                return ret;
+        }
+
+        select_item(self, next);
+        return ret;
+}
+
+static void build_apps(AppCarousel *self)
 {
         GList *apps = NULL;
         GList *elem = NULL;
         GAppInfo *info = NULL;
-        bool first = true;
         GList *children = NULL;
 
         if (self->children) {
@@ -61,13 +112,11 @@ static void build_apps(__attribute__ ((unused)) AppCarousel *self)
                 /* Soo.. this is very temporary.. */
                 image = launcher_image_new(info);
                 gtk_box_pack_start(GTK_BOX(self->box), image, FALSE, FALSE, 0);
-                if (first) {
-                        g_object_set(image, "active", TRUE, NULL);
-                        first = FALSE;
-                }
                 children = g_list_append(children, image);
         }
         self->children = children;
+
+        select_item(self, self->children);
 
         g_list_free(apps);
 }
@@ -87,6 +136,8 @@ static void app_carousel_init(AppCarousel *self)
         build_apps(self);
 
         gtk_widget_set_size_request(GTK_WIDGET(self), -1, LARGE_PIXEL_SIZE+(DEFAULT_PIXEL_SIZE*0.5));
+
+        gtk_widget_add_events(GTK_WIDGET(self), GDK_KEY_PRESS_MASK | GDK_KEY_RELEASE_MASK);
 
         g_object_set(self, MARGIN_START, 10, MARGIN_END, 10, NULL);
 }
