@@ -37,7 +37,7 @@ static void app_carousel_class_init(AppCarouselClass *klass)
         widg_class->key_press_event = key_release_event;
 }
 
-static void select_item(AppCarousel *self, GList *node)
+static void select_item(AppCarousel *self, GList *node, bool next)
 {
         LauncherImage *image = NULL;
         GtkAllocation alloc;
@@ -67,7 +67,11 @@ static void select_item(AppCarousel *self, GList *node)
                 if (alloc.x > max) {
                         nval = val;
                 } else {
-                        nval = alloc.x- (alloc.width*3.5);
+                        if (next) {
+                                nval = alloc.x- (alloc.width*3.5);
+                        } else {
+                                nval = alloc.x- (alloc.width*2.65);
+                        }
                 }
         }
         gtk_adjustment_set_value(adj, nval);
@@ -79,6 +83,7 @@ static gboolean key_release_event(GtkWidget *widget, GdkEventKey *key)
 
         gboolean ret = GDK_EVENT_STOP;
         GList *next = NULL;
+        bool next_switch = true;
 
         if (!self->node) {
                 return GDK_EVENT_PROPAGATE;
@@ -90,6 +95,7 @@ static gboolean key_release_event(GtkWidget *widget, GdkEventKey *key)
                         break;
                 case GDK_KEY_Left:
                         next = self->node->prev;
+                        next_switch = false;
                         break;
                 default:
                         ret = GDK_EVENT_PROPAGATE;
@@ -100,7 +106,7 @@ static gboolean key_release_event(GtkWidget *widget, GdkEventKey *key)
                 return ret;
         }
 
-        select_item(self, next);
+        select_item(self, next, next_switch);
         return ret;
 }
 
@@ -136,7 +142,7 @@ static void build_apps(AppCarousel *self)
         }
         self->children = children;
 
-        select_item(self, self->children);
+        select_item(self, self->children, true);
 
         g_list_free(apps);
 }
