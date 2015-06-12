@@ -198,6 +198,7 @@ static void main_window_init(MainWindow *self)
         self->apps = wid;
 
         gtk_widget_show_all(GTK_WIDGET(self));
+        toggle_fullscreen(self);
 }
 
 static void app_quit(GApplication *app, __attribute__ ((unused)) gpointer udata)
