@@ -77,6 +77,36 @@ static void select_item(AppCarousel *self, GList *node, bool next)
         gtk_adjustment_set_value(adj, nval);
 }
 
+/**
+ * Launch the currently selected launcher
+ *
+ * @param self Current instance
+ */
+static void activate_item(AppCarousel *self)
+{
+        GError *error = NULL;
+        GAppInfo *info = NULL;
+        LauncherImage *image = NULL;
+
+        if (!self->node) {
+                return;
+        }
+
+        image = self->node->data;
+        g_object_get(image, "appinfo", &info, NULL);
+        if (!info) {
+                fprintf(stderr, "Launcher is missing appinfo. Kinda fatal.\n");
+                return;
+        }
+
+        if (!g_app_info_launch(info, NULL, NULL, &error)) {
+                fprintf(stderr, "Error launching app: %s\n", error->message);
+        }
+        if (error) {
+                g_error_free(error);
+        }
+}
+
 static gboolean key_release_event(GtkWidget *widget, GdkEventKey *key)
 {
         AppCarousel *self = APP_CAROUSEL(widget);
@@ -96,6 +126,10 @@ static gboolean key_release_event(GtkWidget *widget, GdkEventKey *key)
                 case GDK_KEY_Left:
                         next = self->node->prev;
                         next_switch = false;
+                        break;
+                case GDK_KEY_Return:
+                case GDK_KEY_KP_Enter:
+                        activate_item(self);
                         break;
                 default:
                         ret = GDK_EVENT_PROPAGATE;

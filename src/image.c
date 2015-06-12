@@ -86,7 +86,7 @@ static void launcher_image_class_init(LauncherImageClass *klass)
 
         obj_props[PROP_APPINFO] =
                 g_param_spec_pointer("appinfo", "AppInfo", "AppInfo",
-                        G_PARAM_CONSTRUCT | G_PARAM_WRITABLE);
+                        G_PARAM_READWRITE | G_PARAM_CONSTRUCT);
         obj_props[PROP_ACTIVE] =
                 g_param_spec_boolean("active", "Active", "Active",  FALSE,
                         G_PARAM_READWRITE | G_PARAM_CONSTRUCT);
