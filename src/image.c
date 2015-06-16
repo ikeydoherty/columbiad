@@ -10,8 +10,9 @@
  */
 
 #include "image.h"
+#include "common.h"
 
-G_DEFINE_TYPE(LauncherImage, launcher_image, GTK_TYPE_EVENT_BOX)
+G_DEFINE_TYPE(LauncherImage, launcher_image, GTK_TYPE_BOX)
 
 /* Boilerplate GObject code */
 static void launcher_image_class_init(LauncherImageClass *klass);
@@ -99,12 +100,20 @@ static void launcher_image_class_init(LauncherImageClass *klass)
 
 static void launcher_image_init(LauncherImage *self)
 {
-        GtkWidget *image = NULL;
+        GtkWidget *image = NULL, *label = NULL;
 
         image = gtk_image_new();
-        gtk_container_add(GTK_CONTAINER(self), image);
+        gtk_box_pack_start(GTK_BOX(self), image, FALSE, FALSE, 0);
         g_object_set(image, "margin", 10, NULL);
         self->image = image;
+
+        gtk_widget_set_halign(image, GTK_ALIGN_START);
+
+        label = gtk_label_new("");
+        WCLASS(label, "launcher");
+        gtk_label_set_line_wrap(GTK_LABEL(label), TRUE);
+        gtk_box_pack_start(GTK_BOX(self), label, FALSE, FALSE, 1);
+        self->label = label;
 }
 
 static void update_app_info(LauncherImage *self)
@@ -114,6 +123,8 @@ static void update_app_info(LauncherImage *self)
         }
         gtk_image_set_from_gicon(GTK_IMAGE(self->image), g_app_info_get_icon(self->info), GTK_ICON_SIZE_DIALOG);
         gtk_image_set_pixel_size(GTK_IMAGE(self->image), DEFAULT_PIXEL_SIZE);
+
+        gtk_label_set_text(GTK_LABEL(self->label), g_app_info_get_display_name(self->info));
 }
 
 /**
@@ -128,8 +139,10 @@ static void update_appearance(LauncherImage *self)
         }
         if (self->active) {
                 gtk_image_set_pixel_size(GTK_IMAGE(self->image), LARGE_PIXEL_SIZE);
+                WCLASS(self->label, "active-text");
         } else {
                 gtk_image_set_pixel_size(GTK_IMAGE(self->image), DEFAULT_PIXEL_SIZE);
+                WRMCLASS(self->label, "active-text");
         }
 }
 
@@ -143,6 +156,6 @@ GtkWidget *launcher_image_new(GAppInfo *info)
 {
         GtkWidget *self;
 
-        self = g_object_new(LAUNCHER_IMAGE_TYPE, "appinfo", info, NULL);
+        self = g_object_new(LAUNCHER_IMAGE_TYPE, "orientation", GTK_ORIENTATION_VERTICAL, "appinfo", info, NULL);
         return self;
 }

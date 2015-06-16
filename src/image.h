@@ -27,12 +27,13 @@ typedef struct _LauncherImageClass   LauncherImageClass;
 
 
 /* In future do the whole maths thing to figure out a reasonable size */
-#define DEFAULT_PIXEL_SIZE 128
+#define DEFAULT_PIXEL_SIZE 160
 #define LARGE_PIXEL_SIZE 256
 
 /* LauncherImage object */
 struct _LauncherImage {
-        GtkEventBox parent;
+        GtkBox parent;
+        GtkWidget *label;
         GtkWidget *image;
         GAppInfo *info;
         gboolean active;
@@ -40,7 +41,7 @@ struct _LauncherImage {
 
 /* LauncherImage class definition */
 struct _LauncherImageClass {
-        GtkEventBoxClass parent_class;
+        GtkBoxClass parent_class;
 };
 
 GType launcher_image_get_type(void);

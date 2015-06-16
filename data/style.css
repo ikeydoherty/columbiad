@@ -38,3 +38,13 @@ GtkEventBox, GtkScrolledWindow {
     border-image: none;
     border: 1px solid transparent;
 }
+
+.launcher.active-text {
+    color: lighter(#3C6A81);
+
+}
+
+.launcher {
+    font-size: 10pt;
+    color: #3C6A81;
+}

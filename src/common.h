@@ -25,3 +25,7 @@
 
 /* Utility: Add class to a widgets stylecontext */
 #define WCLASS(w,c) { gtk_style_context_add_class(gtk_widget_get_style_context(GTK_WIDGET(w)), c); }
+
+/* Utility: Remove class from a widgets stylecontext */
+#define WRMCLASS(w,c) { gtk_style_context_remove_class(gtk_widget_get_style_context(GTK_WIDGET(w)), c); }
+
