@@ -41,6 +41,8 @@ columbiad_SOURCES = \
 	src/carousel.c \
 	src/image.h \
 	src/image.c \
+	src/settings.h \
+	src/settings.c \
 	src/common.h \
 	app-resources.h \
 	app-resources.c

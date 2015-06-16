@@ -14,6 +14,7 @@
 #include "carousel.h"
 #include "image.h"
 #include "common.h"
+#include "settings.h"
 
 
 G_DEFINE_TYPE(AppCarousel, app_carousel, GTK_TYPE_EVENT_BOX)
@@ -195,7 +196,7 @@ static void app_carousel_init(AppCarousel *self)
         self->box = wid;
         build_apps(self);
 
-        gtk_widget_set_size_request(GTK_WIDGET(self), -1, LARGE_PIXEL_SIZE+(DEFAULT_PIXEL_SIZE*0.5));
+        gtk_widget_set_size_request(GTK_WIDGET(self), -1, app_settings_get_icon_size_large()+(app_settings_get_icon_size()*0.5));
 
         gtk_widget_add_events(GTK_WIDGET(self), GDK_KEY_PRESS_MASK | GDK_KEY_RELEASE_MASK);
 

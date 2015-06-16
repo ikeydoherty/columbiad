@@ -11,6 +11,7 @@
 
 #include "image.h"
 #include "common.h"
+#include "settings.h"
 
 G_DEFINE_TYPE(LauncherImage, launcher_image, GTK_TYPE_BOX)
 
@@ -122,7 +123,7 @@ static void update_app_info(LauncherImage *self)
                 return;
         }
         gtk_image_set_from_gicon(GTK_IMAGE(self->image), g_app_info_get_icon(self->info), GTK_ICON_SIZE_DIALOG);
-        gtk_image_set_pixel_size(GTK_IMAGE(self->image), DEFAULT_PIXEL_SIZE);
+        gtk_image_set_pixel_size(GTK_IMAGE(self->image), app_settings_get_icon_size());
 
         gtk_label_set_text(GTK_LABEL(self->label), g_app_info_get_display_name(self->info));
 }
@@ -138,10 +139,10 @@ static void update_appearance(LauncherImage *self)
                 return;
         }
         if (self->active) {
-                gtk_image_set_pixel_size(GTK_IMAGE(self->image), LARGE_PIXEL_SIZE);
+                gtk_image_set_pixel_size(GTK_IMAGE(self->image), app_settings_get_icon_size_large());
                 WCLASS(self->label, "active-text");
         } else {
-                gtk_image_set_pixel_size(GTK_IMAGE(self->image), DEFAULT_PIXEL_SIZE);
+                gtk_image_set_pixel_size(GTK_IMAGE(self->image), app_settings_get_icon_size());
                 WRMCLASS(self->label, "active-text");
         }
 }
