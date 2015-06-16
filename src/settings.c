@@ -94,7 +94,7 @@ static void app_settings_class_init(AppSettingsClass *klass)
         g_object_class_install_properties(g_object_class, N_PROPERTIES, obj_props);
 }
 
-static void app_settings_init(__attribute__ ((unused)) AppSettings *self)
+static void app_settings_init(AppSettings *self)
 {
         self->icon_size_small = DEFAULT_PIXEL_SIZE;
         self->icon_size = LARGE_PIXEL_SIZE;
