@@ -108,7 +108,8 @@ static void launcher_image_init(LauncherImage *self)
         g_object_set(image, "margin", 10, NULL);
         self->image = image;
 
-        gtk_widget_set_halign(image, GTK_ALIGN_START);
+        gtk_widget_set_halign(image, GTK_ALIGN_CENTER);
+        gtk_widget_set_valign(image, GTK_ALIGN_CENTER);
 
         label = gtk_label_new("");
         WCLASS(label, "launcher");
