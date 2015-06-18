@@ -32,6 +32,8 @@ struct _LauncherImage {
         GtkWidget *image;
         GAppInfo *info;
         gboolean active;
+
+        gint count;
 };
 
 /* LauncherImage class definition */

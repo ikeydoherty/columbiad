@@ -31,8 +31,7 @@ struct _AppCarousel {
         GtkWidget *scroll;
         GtkWidget *box;
 
-        GList *children;
-        GList *node;
+        GtkWidget *selected;
 };
 
 /* AppCarousel class definition */

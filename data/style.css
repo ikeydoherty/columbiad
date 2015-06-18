@@ -48,3 +48,10 @@ GtkEventBox, GtkScrolledWindow {
     font-size: 10pt;
     color: #3C6A81;
 }
+
+.grid-child,
+.grid-child:selected {
+  background-image: none;
+  background-color: transparent;
+  outline-color: transparent;
+}
