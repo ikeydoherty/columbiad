@@ -43,3 +43,10 @@ AppSettings *app_settings_get_default(void);
 
 gint app_settings_get_icon_size(void);
 gint app_settings_get_icon_size_large(void);
+
+#define SETTINGS_PATH "columbiad.ini"
+
+static inline gchar *get_settings_path(void)
+{
+        return g_build_filename(G_DIR_SEPARATOR_S, g_get_user_config_dir(), SETTINGS_PATH, NULL);
+}

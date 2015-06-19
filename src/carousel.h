@@ -32,6 +32,8 @@ struct _AppCarousel {
         GtkWidget *box;
 
         GtkWidget *selected;
+
+        GKeyFile *config;
 };
 
 /* AppCarousel class definition */
@@ -47,3 +49,10 @@ GType app_carousel_get_type(void);
  * @return A new AppCarousel
  */
 GtkWidget *app_carousel_new(void);
+
+/**
+ * Flush settings to disk
+ *
+ * @param carousel Valid AppCarousel instance
+ */
+void app_carousel_write_config(AppCarousel *carousel);

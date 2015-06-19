@@ -201,9 +201,14 @@ static void main_window_init(MainWindow *self)
         toggle_fullscreen(self);
 }
 
-static void app_quit(GApplication *app, __attribute__ ((unused)) gpointer udata)
+static void app_quit(MainWindow *self, __attribute__ ((unused)) gpointer udata)
 {
-        g_application_quit(app);
+        GtkApplication *app = NULL;
+
+        app_carousel_write_config(APP_CAROUSEL(self->apps));
+        app = gtk_window_get_application(GTK_WINDOW(self));
+
+        g_application_quit(G_APPLICATION(app));
 }
 
 /*
@@ -220,7 +225,7 @@ void main_window_init_ui(MainWindow *self)
         g_action_map_add_action(G_ACTION_MAP(app), G_ACTION(action));
         g_object_unref(action);
 
-        g_signal_connect_swapped(action, "activate", G_CALLBACK(app_quit), app);
+        g_signal_connect_swapped(action, "activate", G_CALLBACK(app_quit), self);
 }
 
 static void main_window_dispose(GObject *object)

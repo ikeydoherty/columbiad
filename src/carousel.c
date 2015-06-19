@@ -65,7 +65,7 @@ static gint sort_items(GtkFlowBoxChild *a, GtkFlowBoxChild *b, __attribute__ ((u
         return (r->count > l->count) - (r->count < l->count);
 }
 
-static void activate_child(__attribute__ ((unused)) AppCarousel *self, GtkFlowBoxChild *child, GtkFlowBox *box)
+static void activate_child(AppCarousel *self, GtkFlowBoxChild *child, GtkFlowBox *box)
 {
         GError *error = NULL;
         GAppInfo *info = NULL;
@@ -88,6 +88,9 @@ static void activate_child(__attribute__ ((unused)) AppCarousel *self, GtkFlowBo
 
         gtk_flow_box_invalidate_sort(box);
         gtk_flow_box_select_child(box, child);
+
+        /* Perhaps optimise?? */
+        app_carousel_write_config(self);
 }
 
 static void build_apps(AppCarousel *self)
@@ -95,7 +98,7 @@ static void build_apps(AppCarousel *self)
         GList *apps = NULL;
         GList *elem = NULL;
         GAppInfo *info = NULL;
-
+        GError *error = NULL;
 
         apps = g_app_info_get_all();
         if (!apps) {
@@ -106,20 +109,76 @@ static void build_apps(AppCarousel *self)
 
         for (elem = apps; elem; elem = elem->next) {
                 GtkWidget *image = NULL;
+                const gchar *id = NULL;
                 info = elem->data;
                 if (!g_app_info_should_show(info)) {
                         continue;
                 }
                 image = launcher_image_new(info);
+                id = g_app_info_get_id(info);
                 gtk_container_add(GTK_CONTAINER(self->box), image);
+
+                /* Set the count if we have it.. */
+                if (self->config && g_key_file_has_key(self->config, "Counts", id, NULL)) {
+                        gint count = g_key_file_get_integer(self->config, "Counts", id, &error);
+                        if (error) {
+                                g_printerr("Error loading int: [Counts] %s\n", error->message);
+                                g_error_free(error);
+                                continue;
+                        }
+                        LAUNCHER_IMAGE(image)->count = count;
+                }
         }
 
         g_list_free(apps);
 }
 
+void app_carousel_write_config(AppCarousel *self)
+{
+        GError *error = NULL;
+        gchar *path = NULL;
+        GKeyFile *config = NULL;
+        GList *children = NULL, *em = NULL;
+        LauncherImage *image = NULL;
+        const gchar *id = NULL;
+
+        path = get_settings_path();
+        config = g_key_file_new();
+
+        children = gtk_container_get_children(GTK_CONTAINER(self->box));
+
+        for (em = children; em; em = em->next) {
+                image = LAUNCHER_IMAGE(gtk_bin_get_child(GTK_BIN(em->data)));
+                id = g_app_info_get_id(image->info);
+                if (image->count == 0) {
+                        continue;
+                }
+                g_key_file_set_integer(config, "Counts", id, image->count);
+        }
+
+        if (!g_key_file_save_to_file(config, path, &error)) {
+                g_printerr("Unable to write config: %s", error->message);
+        }
+
+        g_key_file_unref(config);
+        g_free(path);
+}
+
 static void app_carousel_init(AppCarousel *self)
 {
         GtkWidget *wid = NULL;
+        GKeyFile *config = NULL;
+        GError *error = NULL;
+        gchar *path = NULL;
+
+        config = g_key_file_new();
+        path = get_settings_path();
+        self->config = config;
+
+        if (g_file_test(path, G_FILE_TEST_EXISTS) && !g_key_file_load_from_file(config, path, G_KEY_FILE_NONE, &error)) {
+                g_printerr("Error loading configuration: %s\n", error->message);
+                g_error_free(error);
+        }
 
         wid = gtk_scrolled_window_new(NULL, NULL);
         gtk_container_add(GTK_CONTAINER(self), wid);
@@ -134,6 +193,8 @@ static void app_carousel_init(AppCarousel *self)
         self->box = wid;
         build_apps(self);
 
+        gtk_flow_box_invalidate_sort(GTK_FLOW_BOX(self->box));
+
         g_signal_connect_swapped(wid, "child-activated", G_CALLBACK(activate_child), self);
         g_signal_connect_swapped(wid, "selected-children-changed", G_CALLBACK(selection_changed), self);
         gtk_widget_set_size_request(GTK_WIDGET(self), -1, app_settings_get_icon_size_large()+(app_settings_get_icon_size()*0.5));
@@ -141,11 +202,20 @@ static void app_carousel_init(AppCarousel *self)
         gtk_widget_add_events(GTK_WIDGET(self), GDK_KEY_PRESS_MASK | GDK_KEY_RELEASE_MASK);
 
         g_object_set(self, MARGIN_START, 10, MARGIN_END, 10, NULL);
+
+        g_free(path);
 }
 
 
 static void app_carousel_dispose(GObject *object)
 {
+        AppCarousel *self = APP_CAROUSEL(object);
+
+        if (self->config) {
+                g_key_file_unref(self->config);
+                self->config = NULL;
+        }
+
         G_OBJECT_CLASS (app_carousel_parent_class)->dispose (object);
 }
 
