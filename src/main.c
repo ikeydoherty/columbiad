@@ -1,9 +1,9 @@
 /*
- * main.c - This file is part of columbiad
+ * This file is part of columbiad.
  *
- * Copyright (C) 2015 Ikey Doherty <ikey.doherty@gmail.com>
+ * Copyright © 2015-2017 Ikey Doherty <ikey@solus-project.com>
  *
- * fullscreen-tv-launcher is free software; you can redistribute it and/or modify
+ * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
  * (at your option) any later version.
