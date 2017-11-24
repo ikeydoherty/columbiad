@@ -155,6 +155,7 @@ static void main_window_init(MainWindow *self)
         GtkWidget *wid = NULL;
         GtkWidget *img = NULL;
         GtkWidget *layout = NULL;
+        GtkStyleContext *style = NULL;
 
         init_styles();
         gtk_window_set_title(GTK_WINDOW(self), "Columbiad");
@@ -162,6 +163,10 @@ static void main_window_init(MainWindow *self)
         gtk_window_set_default_size(GTK_WINDOW(self), 800, 600);
 
         layout = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
+
+        style = gtk_widget_get_style_context(layout);
+        gtk_style_context_add_class(style, "columbiad-view");
+
         gtk_container_add(GTK_CONTAINER(self), layout);
 
         /* Top box setup */
