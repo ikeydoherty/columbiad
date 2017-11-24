@@ -1,8 +1,8 @@
 /*
  * window.c
- * 
+ *
  * Copyright 2015 Ikey Doherty <ikey.doherty@gmail.com>
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -35,8 +35,8 @@ static void init_styles(void)
         file = g_file_new_for_uri("resource://com/github/ikeydoherty/columbiad/style.css");
         if (gtk_css_provider_load_from_file(css_provider, file, NULL)) {
                 gtk_style_context_add_provider_for_screen(screen,
-                        GTK_STYLE_PROVIDER(css_provider),
-                        GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
+                                                          GTK_STYLE_PROVIDER(css_provider),
+                                                          GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
         }
         g_object_unref(css_provider);
         g_object_unref(file);
@@ -50,7 +50,7 @@ static gboolean update_clock(MainWindow *self)
 
         time(&rtime);
         ti = localtime(&rtime);
-        if (strftime(ftime, sizeof ftime, "%H:%M", ti) < (sizeof(ftime)-1)) {
+        if (strftime(ftime, sizeof ftime, "%H:%M", ti) < (sizeof(ftime) - 1)) {
                 self->clock_id = 0;
                 return FALSE;
         }
@@ -59,7 +59,7 @@ static gboolean update_clock(MainWindow *self)
         return TRUE;
 }
 
-static gboolean start_clock(GtkWidget *widget, __attribute__ ((unused)) GdkEventFocus *event)
+static gboolean start_clock(GtkWidget *widget, __attribute__((unused)) GdkEventFocus *event)
 {
         MainWindow *self = MAIN_WINDOW(widget);
 
@@ -67,12 +67,13 @@ static gboolean start_clock(GtkWidget *widget, __attribute__ ((unused)) GdkEvent
                 goto end;
         }
         update_clock(self);
-        self->clock_id = g_timeout_add_seconds_full(G_PRIORITY_LOW, 1, (GSourceFunc)update_clock, self, NULL);
+        self->clock_id =
+            g_timeout_add_seconds_full(G_PRIORITY_LOW, 1, (GSourceFunc)update_clock, self, NULL);
 end:
         return GDK_EVENT_PROPAGATE;
 }
 
-static gboolean stop_clock(GtkWidget *widget, __attribute__ ((unused)) GdkEventFocus *event)
+static gboolean stop_clock(GtkWidget *widget, __attribute__((unused)) GdkEventFocus *event)
 {
         MainWindow *self = MAIN_WINDOW(widget);
 
@@ -106,26 +107,26 @@ static gboolean key_handler(GtkWidget *widget, GdkEventKey *key)
         gboolean ret = GDK_EVENT_STOP;
 
         switch (key->keyval) {
-                case GDK_KEY_Escape:
-                case GDK_KEY_Down:
-                case GDK_KEY_Up:
-                        g_signal_emit_by_name(self->button, "clicked", NULL);
-                        break;
-                case GDK_KEY_F11:
-                case GDK_KEY_F:
-                case GDK_KEY_f:
+        case GDK_KEY_Escape:
+        case GDK_KEY_Down:
+        case GDK_KEY_Up:
+                g_signal_emit_by_name(self->button, "clicked", NULL);
+                break;
+        case GDK_KEY_F11:
+        case GDK_KEY_F:
+        case GDK_KEY_f:
+                toggle_fullscreen(self);
+                break;
+        /* Must stay at the end to cascade */
+        case GDK_KEY_Return:
+        case GDK_KEY_KP_Enter:
+                if (key->state & GDK_MOD1_MASK) {
                         toggle_fullscreen(self);
-                        break;
-                /* Must stay at the end to cascade */
-                case GDK_KEY_Return:
-                case GDK_KEY_KP_Enter:
-                        if (key->state & GDK_MOD1_MASK) {
-                                toggle_fullscreen(self);
-                        }
-                        break;
-                default:
-                        ret = GDK_EVENT_PROPAGATE;
-                        break;
+                }
+                break;
+        default:
+                ret = GDK_EVENT_PROPAGATE;
+                break;
         }
         return ret;
 }
@@ -166,7 +167,16 @@ static void main_window_init(MainWindow *self)
         /* Top box setup */
         box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 4);
         gtk_box_pack_start(GTK_BOX(layout), box, FALSE, FALSE, 0);
-        g_object_set(box, "halign", GTK_ALIGN_END, "valign", GTK_ALIGN_START, MARGIN_END, 20, "margin-top", 40, NULL);
+        g_object_set(box,
+                     "halign",
+                     GTK_ALIGN_END,
+                     "valign",
+                     GTK_ALIGN_START,
+                     MARGIN_END,
+                     20,
+                     "margin-top",
+                     40,
+                     NULL);
 
         wid = gtk_label_new("");
         gtk_widget_set_halign(wid, GTK_ALIGN_START);
@@ -174,7 +184,8 @@ static void main_window_init(MainWindow *self)
         gtk_box_pack_start(GTK_BOX(box), wid, FALSE, FALSE, 0);
         self->clock = wid;
 
-        self->clock_id = g_timeout_add_seconds_full(G_PRIORITY_LOW, 1, (GSourceFunc)update_clock, self, NULL);
+        self->clock_id =
+            g_timeout_add_seconds_full(G_PRIORITY_LOW, 1, (GSourceFunc)update_clock, self, NULL);
         update_clock(self);
 
         wid = gtk_menu_button_new();
@@ -201,7 +212,7 @@ static void main_window_init(MainWindow *self)
         toggle_fullscreen(self);
 }
 
-static void app_quit(MainWindow *self, __attribute__ ((unused)) gpointer udata)
+static void app_quit(MainWindow *self, __attribute__((unused)) gpointer udata)
 {
         GtkApplication *app = NULL;
 
@@ -238,7 +249,7 @@ static void main_window_dispose(GObject *object)
         }
         stop_clock(GTK_WIDGET(self), NULL);
 
-        G_OBJECT_CLASS (main_window_parent_class)->dispose (object);
+        G_OBJECT_CLASS(main_window_parent_class)->dispose(object);
 }
 
 /* Utility; return a new MainWindow */

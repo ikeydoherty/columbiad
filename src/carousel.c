@@ -1,8 +1,8 @@
 /*
  * carousel.c
- * 
+ *
  * Copyright 2015 Ikey Doherty <ikey.doherty@gmail.com>
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -12,10 +12,9 @@
 #include <stdbool.h>
 
 #include "carousel.h"
-#include "image.h"
 #include "common.h"
+#include "image.h"
 #include "settings.h"
-
 
 G_DEFINE_TYPE(AppCarousel, app_carousel, GTK_TYPE_EVENT_BOX)
 
@@ -55,7 +54,7 @@ static void selection_changed(AppCarousel *self, GtkFlowBox *box)
         g_list_free(children);
 }
 
-static gint sort_items(GtkFlowBoxChild *a, GtkFlowBoxChild *b, __attribute__ ((unused)) gpointer v)
+static gint sort_items(GtkFlowBoxChild *a, GtkFlowBoxChild *b, __attribute__((unused)) gpointer v)
 {
         LauncherImage *l = NULL, *r = NULL;
 
@@ -175,14 +174,17 @@ static void app_carousel_init(AppCarousel *self)
         path = get_settings_path();
         self->config = config;
 
-        if (g_file_test(path, G_FILE_TEST_EXISTS) && !g_key_file_load_from_file(config, path, G_KEY_FILE_NONE, &error)) {
+        if (g_file_test(path, G_FILE_TEST_EXISTS) &&
+            !g_key_file_load_from_file(config, path, G_KEY_FILE_NONE, &error)) {
                 g_printerr("Error loading configuration: %s\n", error->message);
                 g_error_free(error);
         }
 
         wid = gtk_scrolled_window_new(NULL, NULL);
         gtk_container_add(GTK_CONTAINER(self), wid);
-        gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(wid), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
+        gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(wid),
+                                       GTK_POLICY_AUTOMATIC,
+                                       GTK_POLICY_AUTOMATIC);
         self->scroll = wid;
 
         wid = gtk_flow_box_new();
@@ -196,8 +198,14 @@ static void app_carousel_init(AppCarousel *self)
         gtk_flow_box_invalidate_sort(GTK_FLOW_BOX(self->box));
 
         g_signal_connect_swapped(wid, "child-activated", G_CALLBACK(activate_child), self);
-        g_signal_connect_swapped(wid, "selected-children-changed", G_CALLBACK(selection_changed), self);
-        gtk_widget_set_size_request(GTK_WIDGET(self), -1, app_settings_get_icon_size_large()+(app_settings_get_icon_size()*0.5));
+        g_signal_connect_swapped(wid,
+                                 "selected-children-changed",
+                                 G_CALLBACK(selection_changed),
+                                 self);
+        gtk_widget_set_size_request(GTK_WIDGET(self),
+                                    -1,
+                                    app_settings_get_icon_size_large() +
+                                        (app_settings_get_icon_size() * 0.5));
 
         gtk_widget_add_events(GTK_WIDGET(self), GDK_KEY_PRESS_MASK | GDK_KEY_RELEASE_MASK);
 
@@ -205,7 +213,6 @@ static void app_carousel_init(AppCarousel *self)
 
         g_free(path);
 }
-
 
 static void app_carousel_dispose(GObject *object)
 {
@@ -216,7 +223,7 @@ static void app_carousel_dispose(GObject *object)
                 self->config = NULL;
         }
 
-        G_OBJECT_CLASS (app_carousel_parent_class)->dispose (object);
+        G_OBJECT_CLASS(app_carousel_parent_class)->dispose(object);
 }
 
 /* Utility; return a new AppCarousel */

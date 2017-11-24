@@ -9,14 +9,14 @@
  * (at your option) any later version.
  */
 
-#include <stdlib.h>
 #include <gtk/gtk.h>
+#include <stdlib.h>
 
 #include "window.h"
 
 static MainWindow *kapp = NULL;
 
-static void app_activate(GApplication *app, __attribute__ ((unused)) gpointer udata)
+static void app_activate(GApplication *app, __attribute__((unused)) gpointer udata)
 {
         if (kapp) {
                 goto present;
