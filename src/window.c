@@ -121,8 +121,8 @@ static gboolean key_handler(GtkWidget *widget, GdkEventKey *key)
                 case GDK_KEY_KP_Enter:
                         if (key->state & GDK_MOD1_MASK) {
                                 toggle_fullscreen(self);
-                                break;
                         }
+                        break;
                 default:
                         ret = GDK_EVENT_PROPAGATE;
                         break;
