@@ -8,7 +8,7 @@ AM_CFLAGS = -fstack-protector -Wall -Wno-pedantic \
         -Wstrict-prototypes -Wundef -fno-common \
         -Werror-implicit-function-declaration \
         -Wformat -Wformat-security -Werror=format-security \
-        -Wno-conversion -Wunreachable-code -std=c99 -Werror
+        -Wno-conversion -Wunreachable-code -std=c99
 
 AM_CPPFLAGS = \
 	-I $(top_srcdir) \
