@@ -137,7 +137,7 @@ void app_carousel_write_config(AppCarousel *self)
         g_autoptr(GError) error = NULL;
         g_autofree gchar *path = NULL;
         GKeyFile *config = NULL;
-        GList *children = NULL, *em = NULL;
+        GList *children = NULL;
         LauncherImage *image = NULL;
         const gchar *id = NULL;
 
@@ -146,7 +146,7 @@ void app_carousel_write_config(AppCarousel *self)
 
         children = gtk_container_get_children(GTK_CONTAINER(self->box));
 
-        for (em = children; em; em = em->next) {
+        for (GList *em = children; em; em = em->next) {
                 image = LAUNCHER_IMAGE(gtk_bin_get_child(GTK_BIN(em->data)));
                 id = g_app_info_get_id(image->info);
                 if (image->count == 0) {
