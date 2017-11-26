@@ -19,6 +19,10 @@
     -gtk-icon-shadow: 0px 1px 2px alpha(white, 0.3)
 }
 
+.image-button {
+    color: lighter(#3C6A81);
+}
+
 .columbiad-view {
     background-image: -gtk-gradient(linear,
         left center, right bottom,

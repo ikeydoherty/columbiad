@@ -194,6 +194,8 @@ static void main_window_init(MainWindow *self)
         wid = gtk_menu_button_new();
         self->button = wid;
         img = gtk_image_new_from_icon_name("system-shutdown-symbolic", GTK_ICON_SIZE_LARGE_TOOLBAR);
+        style = gtk_widget_get_style_context(wid);
+        gtk_style_context_add_class(style, "image-button");
         gtk_container_add(GTK_CONTAINER(wid), img);
 
         gtk_widget_set_can_focus(wid, FALSE);
