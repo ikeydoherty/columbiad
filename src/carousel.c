@@ -134,8 +134,8 @@ static void build_apps(AppCarousel *self)
 
 void app_carousel_write_config(AppCarousel *self)
 {
-        GError *error = NULL;
-        gchar *path = NULL;
+        g_autoptr(GError) error = NULL;
+        g_autofree gchar *path = NULL;
         GKeyFile *config = NULL;
         GList *children = NULL, *em = NULL;
         LauncherImage *image = NULL;
@@ -160,7 +160,6 @@ void app_carousel_write_config(AppCarousel *self)
         }
 
         g_key_file_unref(config);
-        g_free(path);
 }
 
 static void app_carousel_init(AppCarousel *self)
@@ -168,7 +167,7 @@ static void app_carousel_init(AppCarousel *self)
         GtkWidget *wid = NULL;
         GKeyFile *config = NULL;
         GError *error = NULL;
-        gchar *path = NULL;
+        g_autofree gchar *path = NULL;
 
         config = g_key_file_new();
         path = get_settings_path();
@@ -210,8 +209,6 @@ static void app_carousel_init(AppCarousel *self)
         gtk_widget_add_events(GTK_WIDGET(self), GDK_KEY_PRESS_MASK | GDK_KEY_RELEASE_MASK);
 
         g_object_set(self, MARGIN_START, 10, MARGIN_END, 10, NULL);
-
-        g_free(path);
 }
 
 static void app_carousel_dispose(GObject *object)

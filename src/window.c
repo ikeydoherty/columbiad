@@ -24,8 +24,8 @@ static void main_window_dispose(GObject *object);
  */
 static void init_styles(void)
 {
-        GtkCssProvider *css_provider;
-        GFile *file = NULL;
+        g_autoptr(GtkCssProvider) css_provider = NULL;
+        g_autoptr(GFile) file = NULL;
         GdkScreen *screen;
 
         screen = gdk_screen_get_default();
@@ -38,8 +38,6 @@ static void init_styles(void)
                                                           GTK_STYLE_PROVIDER(css_provider),
                                                           GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
         }
-        g_object_unref(css_provider);
-        g_object_unref(file);
 }
 
 static gboolean update_clock(MainWindow *self)
@@ -248,10 +246,7 @@ static void main_window_dispose(GObject *object)
 {
         MainWindow *self = MAIN_WINDOW(object);
 
-        if (self->menu) {
-                g_object_unref(self->menu);
-                self->menu = NULL;
-        }
+        g_clear_object(&self->menu);
         stop_clock(GTK_WIDGET(self), NULL);
 
         G_OBJECT_CLASS(main_window_parent_class)->dispose(object);

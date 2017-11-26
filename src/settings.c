@@ -137,8 +137,5 @@ AppSettings *app_settings_get_default(void)
 
 __attribute__((destructor)) static void app_settings_cleanup(void)
 {
-        if (_instance) {
-                g_object_unref(_instance);
-                _instance = NULL;
-        }
+        g_clear_object(&_instance);
 }
