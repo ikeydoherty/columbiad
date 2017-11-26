@@ -33,25 +33,24 @@ static void app_carousel_class_init(AppCarouselClass *klass)
         g_object_class->dispose = &app_carousel_dispose;
 }
 
+static void selection_foreach(GtkFlowBox *box, GtkFlowBoxChild *child, gpointer v)
+{
+        AppCarousel *self = v;
+        LauncherImage *image = NULL;
+
+        image = LAUNCHER_IMAGE(gtk_bin_get_child(GTK_BIN(child)));
+        g_object_set(image, "active", TRUE, NULL);
+        g_message("Selected now: %s", gtk_label_get_text(GTK_LABEL(image->label)));
+        self->selected = GTK_WIDGET(image);
+}
+
 static void selection_changed(AppCarousel *self, GtkFlowBox *box)
 {
-        GList *children = NULL;
-        GtkWidget *image = NULL;
-
         if (self->selected) {
                 g_object_set(self->selected, "active", FALSE, NULL);
         }
 
-        children = gtk_flow_box_get_selected_children(box);
-        if (!children) {
-                return;
-        }
-
-        image = gtk_bin_get_child(GTK_BIN(children->data));
-        g_object_set(image, "active", TRUE, NULL);
-        self->selected = image;
-
-        g_list_free(children);
+        gtk_flow_box_selected_foreach(box, selection_foreach, self);
 }
 
 static gint sort_items(GtkFlowBoxChild *a, GtkFlowBoxChild *b, __attribute__((unused)) gpointer v)
@@ -115,6 +114,7 @@ static void build_apps(AppCarousel *self)
                 }
                 image = launcher_image_new(info);
                 id = g_app_info_get_id(info);
+                gtk_widget_show_all(image);
                 gtk_container_add(GTK_CONTAINER(self->box), image);
 
                 /* Set the count if we have it.. */
