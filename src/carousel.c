@@ -205,7 +205,7 @@ static void app_carousel_init(AppCarousel *self)
         gtk_widget_set_size_request(GTK_WIDGET(self),
                                     -1,
                                     app_settings_get_icon_size_large() +
-                                        (app_settings_get_icon_size() * 0.5));
+                                        (gint)(app_settings_get_icon_size() * 0.5));
 
         gtk_widget_add_events(GTK_WIDGET(self), GDK_KEY_PRESS_MASK | GDK_KEY_RELEASE_MASK);
 

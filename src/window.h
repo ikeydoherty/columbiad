@@ -34,7 +34,7 @@ typedef struct _MainWindowClass MainWindowClass;
 struct _MainWindow {
         GtkApplicationWindow parent;
         GtkWidget *clock;
-        gulong clock_id;
+        guint clock_id;
         GMenu *menu;
         GtkWidget *button;
         GtkWidget *apps;
